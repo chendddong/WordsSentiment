@@ -16,7 +16,7 @@ public class JSONConverter {
         BufferedReader br = new BufferedReader(new FileReader("/Users/Peter/src/SentimentAnalysis/src/main/resources/output/part-r-00000"));
         String line = br.readLine(); /* Read per line */
         /* Convert the result to json inorder to use js to show the result */
-        FileWriter fileWriter = new FileWriter("/Users/Peter/src/SentimentAnalysis/data/result.json");
+        FileWriter fileWriter = new FileWriter("/Users/Peter/src/SentimentAnalysis/data/result.json"); /* Need to modify the title inorder to show the title */
         /* Important steps */
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
