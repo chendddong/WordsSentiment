@@ -1,4 +1,5 @@
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -12,6 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,20 +23,37 @@ public class SentimentAnalysis {
         /* Simple cache for comparison later */
         public Map<String, String> emotionDic = new HashMap<String, String>();
 
+          /*This is the local version running on intelliJ */
+//        @Override
+//        public void setup(Context context) throws IOException{
+//            Configuration configuration = context.getConfiguration();
+//            /* Get from the set */
+//            String dicName = configuration.get("dictionary", "");
+//            /* Load the dictionary */
+//            BufferedReader br = new BufferedReader(new FileReader(dicName));
+//            /* Read per line due to the txt data structure */
+//            String line = br.readLine();
+//
+//            while (line != null) {
+//                /* Break the words by tab */
+//                String[] word_feeling = line.split("\t");
+//                /* Key-Value : word - word_sentiment */
+//                emotionDic.put(word_feeling[0].toLowerCase(), word_feeling[1]);
+//                line = br.readLine();
+//            }
+//            br.close();
+//        }
+
+        /* This is the setup for the HDFS version */
         @Override
         public void setup(Context context) throws IOException{
-            Configuration configuration = context.getConfiguration();
-            /* Get from the set */
-            String dicName = configuration.get("dictionary", "");
-            /* Load the dictionary */
-            BufferedReader br = new BufferedReader(new FileReader(dicName));
-            /* Read per line due to the txt data structure */
+            Path pt=new Path("hdfs:/resources/emotionCategory.txt"); // Location of file in HDFS
+            FileSystem fs = FileSystem.get(new Configuration());
+            BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
             String line = br.readLine();
 
             while (line != null) {
-                /* Break the words by tab */
                 String[] word_feeling = line.split("\t");
-                /* Key-Value : word - word_sentiment */
                 emotionDic.put(word_feeling[0].toLowerCase(), word_feeling[1]);
                 line = br.readLine();
             }
